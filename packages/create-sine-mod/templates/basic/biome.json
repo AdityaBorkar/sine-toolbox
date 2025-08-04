@@ -1,0 +1,67 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.6/schema.json",
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": {
+					"level": "on",
+					"options": {
+						"groups": [
+							["server-only", "use client", "use server", "client-only"],
+							":BLANK_LINE:",
+							":URL:",
+							":BLANK_LINE:",
+							[":NODE:", ":BUN:"],
+							":BLANK_LINE:",
+							[":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
+							":BLANK_LINE:",
+							[":ALIAS:"],
+							":BLANK_LINE:",
+							[":PATH:"]
+						]
+					}
+				},
+				"useSortedAttributes": "on",
+				"useSortedKeys": "on",
+				"useSortedProperties": "on"
+			}
+		}
+	},
+	"files": {
+		"includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
+	},
+	"linter": {
+		"domains": {
+			"next": "none",
+			"project": "all",
+			"react": "all",
+			"solid": "none",
+			"test": "all"
+		},
+		"rules": {
+			"a11y": "on",
+			"complexity": "on",
+			"correctness": {
+				"noNodejsModules": "off",
+				"noUndeclaredVariables": "on",
+				"recommended": true
+			},
+			"nursery": {
+				"recommended": true
+			},
+			"performance": "on",
+			"security": "on",
+			"style": "on",
+			"suspicious": {
+				"noConsole": "off",
+				"recommended": true
+			}
+		}
+	},
+	"vcs": {
+		"clientKind": "git",
+		"defaultBranch": "main",
+		"enabled": true,
+		"useIgnoreFile": true
+	}
+}

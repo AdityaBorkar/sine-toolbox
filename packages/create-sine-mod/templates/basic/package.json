@@ -1,0 +1,19 @@
+{
+	"dependencies": {
+		"@biomejs/biome": "^2.0.0-beta.6"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"sine-toolbox": "0.0.1"
+	},
+	"name": "sine-extension",
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"scripts": {
+		"dev": "bun sine-toolbox dev",
+		"package": "bun sine-toolbox build"
+	},
+	"browser_profiles": [],
+	"theme.json": {}
+}

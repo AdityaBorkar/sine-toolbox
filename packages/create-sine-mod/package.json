@@ -1,0 +1,71 @@
+{
+	"author": {
+		"email": "hi@adityaborkar.com",
+		"name": "Aditya Borkar",
+		"url": "https://adityaborkar.com"
+	},
+	"bin": {
+		"create-sine-mod": "./dist/src/index.cjs"
+	},
+	"bugs": {
+		"url": "https://github.com/AdityaBorkar/sine-toolbox/issues"
+	},
+	"dependencies": {
+		"@types/inquirer": "^9.0.8",
+		"arktype": "^2.1.20",
+		"chalk": "^5.5.0",
+		"commander": "^14.0.0",
+		"inquirer": "^12.9.0",
+		"ora": "^8.2.0"
+	},
+	"description": "Create a Sine Toolbox project",
+	"devDependencies": {
+		"@types/bun": "latest",
+		"zshy": "^0.3.4"
+	},
+	"displayName": "Create Sine Mod",
+	"exports": {
+		".": {
+			"import": "./dist/src/index.js",
+			"require": "./dist/src/index.cjs",
+			"types": "./dist/src/index.d.cts"
+		}
+	},
+	"files": [
+		"LICENSE.md",
+		"./dist",
+		"README.md",
+		"package.json"
+	],
+	"homepage": "https://github.com/AdityaBorkar/sine-toolbox#readme",
+	"keywords": [
+		"create",
+		"sine-mod",
+		"sine mods",
+		"zen mods"
+	],
+	"license": "MIT",
+	"main": "./dist/src/index.cjs",
+	"module": "./dist/src/index.js",
+	"name": "create-sine-mod",
+	"private": false,
+	"repository": {
+		"directory": "packages/create-sine-mod",
+		"type": "git",
+		"url": "https://github.com/AdityaBorkar/sine-toolbox"
+	},
+	"scripts": {
+		"build": "zshy"
+	},
+	"type": "module",
+	"types": "./dist/src/index.d.cts",
+	"version": "0.0.1",
+	"zshy": {
+		"bin": {
+			"create-sine-mod": "./src/index.ts"
+		},
+		"exports": {
+			".": "./src/index.ts"
+		}
+	}
+}

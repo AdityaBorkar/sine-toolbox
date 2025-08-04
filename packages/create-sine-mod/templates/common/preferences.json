@@ -1,0 +1,14 @@
+[
+  {
+    "defaultValue": true,
+    "label": "Increases indicator size on hover",
+    "property": "maanas-extension.hover-scale-animation",
+    "type": "checkbox"
+  },
+  {
+    "defaultValue": true,
+    "label": "Bring back default Firefox icons (Not applicable to Audio Wave mode)",
+    "property": "maanas-extension.old-icons",
+    "type": "checkbox"
+  }
+]
