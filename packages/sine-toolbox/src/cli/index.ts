@@ -22,7 +22,7 @@ program
 	.action(async (options) => {
 		await dev({
 			host: options.host,
-			port: parseInt(options.port),
+			port: Number.parseInt(options.port),
 			watch: options.watch,
 		});
 	});

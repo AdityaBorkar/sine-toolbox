@@ -1,12 +1,18 @@
 {
+	"dependencies": {
+		"@biomejs/biome": "^2.0.0-beta.6",
+		"zshy": "^0.3.4"
+	},
+	"description": "Sine Toolbox Monorepo",
 	"name": "sine-toolbox-monorepo",
 	"private": true,
+	"scripts": {
+		"build": "",
+		"check:code": "biome check --fix --diagnostic-level=error",
+		"check:types": "tsc --noEmit",
+		"publish": ""
+	},
 	"workspaces": [
 		"packages/*"
-	],
-	"description": "Sine Toolbox Monorepo",
-    "scripts": {
-        "build": "",
-        "publish": ""
-    }
+	]
 }

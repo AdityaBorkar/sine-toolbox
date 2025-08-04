@@ -1,3 +1,4 @@
+import process from "node:process";
 import { $ } from "bun";
 
 import { getConfig } from "../utils/getConfig.js";

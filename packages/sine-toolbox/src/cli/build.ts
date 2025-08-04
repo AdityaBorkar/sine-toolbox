@@ -1,4 +1,5 @@
 import { existsSync, rmSync } from "node:fs";
+import process from "node:process";
 import { $ } from "bun";
 
 import { getConfig } from "../utils/getConfig.js";

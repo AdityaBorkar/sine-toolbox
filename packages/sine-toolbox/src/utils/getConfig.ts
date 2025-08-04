@@ -1,7 +1,11 @@
 import { join } from "node:path";
+import process from "node:process";
 import { file } from "bun";
 
-export async function getConfig() {
+export async function getConfig(): Promise<{
+	preferences: null;
+	theme: null;
+}> {
 	const theme: null = null;
 	const preferences: null = null;
 

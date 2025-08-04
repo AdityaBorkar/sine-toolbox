@@ -28,14 +28,7 @@
 		}
 	},
 	"files": {
-		"includes": [
-			"**/*",
-			"!node_modules/**/*",
-			"!dist/**/*",
-			"!bun.lock",
-			// Exclude package.json to avoid sorting of exports.
-			"!package.json"
-		]
+		"includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
 	},
 	"linter": {
 		"domains": {
@@ -55,29 +48,14 @@
 				"recommended": true
 			},
 			"nursery": {
-				"noUnresolvedImports": "off",
-				"recommended": true,
-				"useParseIntRadix": "off",
-				"useSortedClasses": {
-					"fix": "safe",
-					"level": "error",
-					"options": {
-						"attributes": ["classList"],
-						"functions": ["clsx", "cva", "tw", "tw.*"]
-					}
-				}
+				"recommended": true
 			},
 			"performance": "on",
 			"security": "on",
-			"style": {
-				"recommended": true,
-				"useNamingConvention": "off"
-			},
+			"style": "on",
 			"suspicious": {
 				"noConsole": "off",
-				"noExplicitAny": "off", // TODO: Turn "on"
-				"recommended": true,
-				"useAwait": "on"
+				"recommended": true
 			}
 		}
 	},
