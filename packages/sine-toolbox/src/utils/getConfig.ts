@@ -1,10 +1,9 @@
 import { join } from "node:path";
-
 import { file } from "bun";
 
 export async function getConfig() {
-	let theme: null = null;
-	let preferences: null = null;
+	const theme: null = null;
+	const preferences: null = null;
 
 	// If the file exists, read it
 	const themeFile = file(join(process.cwd(), "theme.json"));
@@ -31,4 +30,6 @@ export async function getConfig() {
 		const preferences = packageJson["preferences.json"];
 		// return packageJson
 	}
+
+	return { preferences, theme };
 }

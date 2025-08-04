@@ -1,49 +1,12 @@
 {
-	"name": "sine-toolbox",
-	"module": "index.ts",
-	"private": false,
-	"author": {
-		"name": "Aditya Borkar",
-		"email": "hi@adityaborkar.com",
-		"url": "https://adityaborkar.com"
-	},
-	"bugs": {
-		"url": "https://github.com/AdityaBorkar/sine-toolbox/issues"
-	},
-	"displayName": "Sine Toolbox",
-	"keywords": [
-		"sine mods",
-		"zen mods",
-		"toolbox",
-		"tools"
+	"name": "sine-toolbox-monorepo",
+	"private": true,
+	"workspaces": [
+		"packages/*"
 	],
-	"version": "0.0.1",
-	"files": [
-		"LICENSE.md",
-		"./dist",
-		"README.md",
-		"package.json"
-	],
-	"description": "A collection of tools for Sine",
-	"homepage": "https://github.com/AdityaBorkar/sine-toolbox#readme",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/AdityaBorkar/sine-toolbox"
-	},
-	"type": "module",
-	"devDependencies": {
-		"@types/bun": "latest",
-		"zshy": "^0.3.4"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
-	},
-	"dependencies": {
-		"@biomejs/biome": "^2.0.0-beta.6",
-		"arktype": "^2.1.20"
-	},
-	"zshy": {
-		"bin": "./src/cli/index.ts"
-	}
+	"description": "Sine Toolbox Monorepo",
+    "scripts": {
+        "build": "",
+        "publish": ""
+    }
 }

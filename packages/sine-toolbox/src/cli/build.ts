@@ -1,5 +1,6 @@
+import { existsSync, rmSync } from "node:fs";
 import { $ } from "bun";
-import { rmSync, existsSync } from "node:fs";
+
 import { getConfig } from "../utils/getConfig.js";
 
 interface BuildOptions {
@@ -18,7 +19,7 @@ export async function build(options: BuildOptions) {
 		// Clean output directory if requested
 		if (options.clean && existsSync(options.outdir)) {
 			console.log(`🧹 Cleaning output directory: ${options.outdir}`);
-			rmSync(options.outdir, { recursive: true, force: true });
+			rmSync(options.outdir, { force: true, recursive: true });
 		}
 
 		// Build with Bun

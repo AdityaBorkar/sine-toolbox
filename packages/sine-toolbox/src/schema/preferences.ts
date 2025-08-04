@@ -10,32 +10,32 @@ const ConditionType = type({ if: PropertyValueField })
 // .or(ConditionType); // TODO: Implement Circular Reference
 
 export const PreferencesSchema = type({
-	property: "string",
-	label: "string",
-	restart: "boolean",
-	disabledOn: "('macos' | 'windows' | 'linux')[]",
-	margin: "string",
-	size: "string",
 	conditions: type(ConditionType, "[]"),
+	disabledOn: "('macos' | 'windows' | 'linux')[]",
+	label: "string",
+	margin: "string",
+	property: "string",
+	restart: "boolean",
+	size: "string",
 })
 	.and({
-		type: "'checkbox'",
 		defaultValue: "boolean",
+		type: "'checkbox'",
 	})
 	.and({
-		type: "'dropdown'",
+		defaultValue: "string",
 		options: {
 			label: "string",
 			value: "string",
 		},
-		defaultValue: "string",
 		placeholder: "string",
+		type: "'dropdown'",
 	})
 	.and({
-		type: "'string'",
 		border: "string",
 		defaultValue: "string",
 		placeholder: "string",
+		type: "'string'",
 	})
 	.and({
 		type: "'separator'",

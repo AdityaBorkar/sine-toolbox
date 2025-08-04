@@ -1,4 +1,5 @@
 import { $ } from "bun";
+
 import { getConfig } from "../utils/getConfig.js";
 
 interface DevOptions {
@@ -11,7 +12,9 @@ export async function dev(options: DevOptions) {
 	console.log("🚀 Starting development server...");
 
 	// Load configuration
-	await getConfig();
+	const { theme, preferences } = await getConfig();
+
+	console.log(theme, preferences);
 
 	console.log(`📡 Server will run on http://${options.host}:${options.port}`);
 	console.log(`👀 File watching: ${options.watch ? "enabled" : "disabled"}`);
