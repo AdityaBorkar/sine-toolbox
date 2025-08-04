@@ -1,87 +1,171 @@
 import { join } from "node:path";
-import { $ } from "bun";
+import { $, file } from "bun";
 
-import type { SupportedBrowser } from "./browser-selection.js";
-import type { PlatformInfo } from "./platform-utils.js";
+import Registry from "winreg";
 
-export interface BrowserPaths {
-	configPath: string;
-	profilesPath: string;
-}
+import type { BrowserId } from "./functions/browser/get-browser-id.js";
+import type { PlatformInfo } from "./functions/platform.js";
+import { logger } from "./utils/logger.js";
 
-export async function findBrowserPaths(
-	browser: SupportedBrowser,
-	platformInfo: PlatformInfo,
-): Promise<BrowserPaths | null> {
-	switch (browser) {
-		case "zen":
-			return await findZenBrowserPaths(platformInfo);
-		default:
-			throw new Error(`Unsupported browser: ${browser}`);
+export async function findBrowserPath({
+	browser,
+	platform,
+}: {
+	browser: BrowserId;
+	platform: PlatformInfo;
+}): Promise<string | null> {
+	if (browser === "zen") {
+		return await findZenPath(platform);
 	}
+	if (browser === "firefox") {
+		return await findFirefoxPath(platform);
+	}
+	throw new Error(`Unsupported browser: ${browser}`);
 }
 
-async function findZenBrowserPaths(
-	platformInfo: PlatformInfo,
-): Promise<BrowserPaths | null> {
-	const possiblePaths: string[] = [];
-
-	if (platformInfo.isWSL && platformInfo.browserInstallLocation === "windows") {
-		// Windows paths accessible from WSL
-		const windowsUserProfile = await getWindowsUserProfile();
-		if (windowsUserProfile) {
-			possiblePaths.push(
-				join(windowsUserProfile, "AppData", "Roaming", "zen"),
-				join(windowsUserProfile, "AppData", "Local", "zen"),
-				join(windowsUserProfile, ".zen"),
-			);
-		}
-	} else if (platformInfo.os === "linux") {
-		// Native Linux paths
-		const homeDir = process.env.HOME || "/home/" + process.env.USER;
-		possiblePaths.push(
-			join(homeDir, ".zen"),
-			join(homeDir, ".config", "zen"),
-			join(homeDir, ".local", "share", "zen"),
-		);
-	} else if (platformInfo.os === "windows") {
-		// Native Windows paths
-		const userProfile = process.env.USERPROFILE || process.env.HOME;
+async function findZenPath({
+	os,
+	isWsl,
+}: PlatformInfo): Promise<string | null> {
+	if (os === "windows") {
+		const userProfile = await getWindowsUserProfile(isWsl);
 		if (userProfile) {
-			possiblePaths.push(
+			const possiblePaths = [
 				join(userProfile, "AppData", "Roaming", "zen"),
 				join(userProfile, "AppData", "Local", "zen"),
 				join(userProfile, ".zen"),
-			);
-		}
-	} else if (platformInfo.os === "darwin") {
-		// macOS paths
-		const homeDir = process.env.HOME;
-		if (homeDir) {
-			possiblePaths.push(
-				join(homeDir, "Library", "Application Support", "zen"),
-				join(homeDir, ".zen"),
-			);
-		}
-	}
+			];
 
-	// Check each possible path
-	for (const basePath of possiblePaths) {
-		try {
-			const configFile = Bun.file(join(basePath, "profiles.ini"));
-			if (await configFile.exists()) {
-				return {
-					configPath: basePath,
-					profilesPath: basePath,
-				};
+			for (const path of possiblePaths) {
+				try {
+					const testFile = file(path);
+					if (await testFile.exists()) {
+						return path;
+					}
+				} catch {}
 			}
-		} catch {}
-	}
+		}
 
+		// Try registry lookup for Zen browser
+		if (!isWsl) {
+			const registryPath = await getFromRegistry(
+				Registry.HKLM,
+				"\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\zen.exe",
+				"",
+			);
+			if (registryPath) {
+				const configPath = join(registryPath, "..", "zen");
+				try {
+					const testFile = file(configPath);
+					if (await testFile.exists()) {
+						return configPath;
+					}
+				} catch {}
+			}
+		}
+	}
+	if (os === "linux") {
+		const possiblePaths = [
+			join(process.env.HOME || "", ".zen"),
+			join(process.env.HOME || "", ".config", "zen"),
+		];
+
+		for (const path of possiblePaths) {
+			try {
+				const testFile = file(path);
+				if (await testFile.exists()) {
+					return path;
+				}
+			} catch {}
+		}
+	}
+	if (os === "darwin") {
+		const possiblePaths = [
+			join(process.env.HOME || "", "Library", "Application Support", "zen"),
+		];
+
+		for (const path of possiblePaths) {
+			try {
+				const testFile = file(path);
+				if (await testFile.exists()) {
+					return path;
+				}
+			} catch {}
+		}
+	}
 	return null;
 }
 
-async function getWindowsUserProfile(): Promise<string | null> {
+async function findFirefoxPath({
+	os,
+	isWsl,
+}: PlatformInfo): Promise<string | null> {
+	if (os === "windows") {
+		const userProfile = await getWindowsUserProfile(isWsl);
+		if (userProfile) {
+			const possiblePaths = [
+				join(userProfile, "AppData", "Roaming", "Mozilla", "Firefox"),
+				join(userProfile, "AppData", "Local", "Mozilla", "Firefox"),
+			];
+
+			for (const path of possiblePaths) {
+				try {
+					const testFile = file(path);
+					if (await testFile.exists()) {
+						return path;
+					}
+				} catch {}
+			}
+		}
+
+		// Try registry lookup for Firefox
+		if (!isWsl) {
+			const registryPath = await getFromRegistry(
+				Registry.HKLM,
+				"\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\firefox.exe",
+				"",
+			);
+			if (registryPath) {
+				const configPath = join(registryPath, "..", "..", "Mozilla", "Firefox");
+				try {
+					const testFile = file(configPath);
+					if (await testFile.exists()) {
+						return configPath;
+					}
+				} catch {}
+			}
+		}
+	}
+	if (os === "linux") {
+		const possiblePaths = [join(process.env.HOME || "", ".mozilla", "firefox")];
+
+		for (const path of possiblePaths) {
+			try {
+				const testFile = file(path);
+				if (await testFile.exists()) {
+					return path;
+				}
+			} catch {}
+		}
+	}
+	if (os === "darwin") {
+		const possiblePaths = [
+			join(process.env.HOME || "", "Library", "Application Support", "Firefox"),
+		];
+
+		for (const path of possiblePaths) {
+			try {
+				const testFile = file(path);
+				if (await testFile.exists()) {
+					return path;
+				}
+			} catch {}
+		}
+	}
+	return null;
+}
+
+async function getWindowsUserProfile(isWsl: boolean): Promise<string | null> {
 	try {
 		// Try to get Windows user profile path from WSL
 		const result = await $`cmd.exe /c "echo %USERPROFILE%"`.text();
@@ -100,7 +184,7 @@ async function getWindowsUserProfile(): Promise<string | null> {
 			if (user) {
 				const testPath = `/mnt/c/Users/${user}`;
 				try {
-					const testFile = Bun.file(testPath);
+					const testFile = file(testPath);
 					if (await testFile.exists()) {
 						return testPath;
 					}
@@ -112,11 +196,32 @@ async function getWindowsUserProfile(): Promise<string | null> {
 	return null;
 }
 
-export async function validateBrowserInstallation(
-	paths: BrowserPaths,
-): Promise<boolean> {
+async function getFromRegistry(
+	hive: Registry.Registry,
+	key: string,
+	name: string,
+): Promise<string | null> {
+	return new Promise((resolve) => {
+		const reg = new Registry({
+			hive,
+			key,
+		});
+
+		reg.get(name, (err, item) => {
+			if (err || !item) {
+				resolve(null);
+				return;
+			}
+			resolve(item.value);
+		});
+	});
+}
+
+export async function validateBrowserInstallation(paths: {
+	configPath: string;
+}): Promise<boolean> {
 	try {
-		const profilesIni = Bun.file(join(paths.configPath, "profiles.ini"));
+		const profilesIni = file(join(paths.configPath, "profiles.ini"));
 		return await profilesIni.exists();
 	} catch {
 		return false;

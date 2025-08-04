@@ -1,4 +1,5 @@
 {
+	"browser_profiles": [],
 	"dependencies": {
 		"@biomejs/biome": "^2.0.0-beta.6"
 	},
@@ -14,6 +15,5 @@
 		"dev": "bun sine-toolbox dev",
 		"package": "bun sine-toolbox build"
 	},
-	"browser_profiles": [],
 	"theme.json": {}
 }

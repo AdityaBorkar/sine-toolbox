@@ -16,11 +16,13 @@
 		"chalk": "^5.5.0",
 		"commander": "^14.0.0",
 		"inquirer": "^12.9.0",
-		"ora": "^8.2.0"
+		"ora": "^8.2.0",
+		"winreg": "^1.2.5"
 	},
-	"description": "Create a Sine Toolbox project",
+	"description": "Create a Sine App project",
 	"devDependencies": {
 		"@types/bun": "latest",
+		"@types/winreg": "^1.2.4",
 		"zshy": "^0.3.4"
 	},
 	"displayName": "Create Sine App",
@@ -41,8 +43,7 @@
 	"keywords": [
 		"create",
 		"sine-app",
-		"sine mods",
-		"zen mods"
+		"browser extension"
 	],
 	"license": "MIT",
 	"main": "./dist/src/index.cjs",

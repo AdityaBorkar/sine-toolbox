@@ -33,5 +33,7 @@
 	"typescript.suggest.autoImports": true,
 	"typescript.suggest.paths": true,
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"typescript.updateImportsOnFileMove.enabled": "always"
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"todo-tree.tree.showBadges": true,
+	"todo-tree.tree.showCountsInTree": true
 }

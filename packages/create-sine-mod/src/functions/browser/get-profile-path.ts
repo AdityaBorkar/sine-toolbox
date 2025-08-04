@@ -1,47 +1,57 @@
-import { findBrowserPath } from "../../browser-paths.js";
-import {
-	formatProfileForPackageJson,
-	listBrowserProfiles,
-	selectBrowserProfile,
-} from "../../profile-manager.js";
+import { join } from "node:path";
+
+import inquirer from "inquirer";
+
 import { logger } from "../../utils/logger.js";
 import { detectPlatform } from "../platform.js";
+import { findProfiles } from "./find-profiles.js";
 import { getBrowserId } from "./get-browser-id.js";
 
-export async function getBrowserProfilePath(): Promise<string | null> {
+export async function getProfilePath(): Promise<string | null> {
 	const spinner = logger.start(
 		"🔧 Detecting Browser Profile (for development)...",
 	);
 
 	const browser = await getBrowserId();
-	const platform = await detectPlatform();
-	if (platform.isWSL) {
-		// TODO: Ask for Windows / WSL
+	let platform = await detectPlatform();
+	if (platform.isWsl) {
+		const { os } = await inquirer.prompt([
+			{
+				choices: ["windows", "linux"],
+				default: "windows",
+				message:
+					"(Since you're running on WSL) Where is your browser installed?",
+				name: "os",
+				type: "list",
+			},
+		]);
+		platform = { isWsl: true, os };
 	}
 
 	spinner.text = "🔍 Searching for browser installation...";
-	const browserPath = await findBrowserPath(browser, platform);
-	console.log({ browser, platform }); // TODO!!
-	console.log({ browserPath }); // TODO!!
-	if (!browserPath) {
+	const profiles = await findProfiles({ browser, platform });
+	if (!profiles) {
 		logger.error("Browser installation not found");
 		return null;
 	}
-	spinner.succeed(`✅ Browser installation found at "${browserPath}"`);
 
-	const profiles = await listBrowserProfiles(browserPath);
-	if (profiles.length === 0) {
-		spinner.fail("No browser profiles found");
-		spinner.warn("Please create a profile in your browser first");
-		return null;
+	if (profiles.profiles.length === 1) {
+		logger.info(`Using profile: ${profiles.profiles[0]}`);
+		return profiles.profiles[0];
 	}
 
-	const selectedProfile = await selectBrowserProfile(profiles);
-	if (!selectedProfile) {
-		spinner.fail("No profile selected");
-		return null;
-	}
+	const { selectedProfile } = await inquirer.prompt([
+		{
+			choices: profiles.profiles.map((profile) => ({
+				name: profile,
+				value: profile,
+			})),
+			default: profiles.profiles[0],
+			message: "Select a browser profile:",
+			name: "selectedProfile",
+			type: "list",
+		},
+	]);
 
-	spinner.succeed("✅ Profile selected");
-	return formatProfileForPackageJson(selectedProfile);
+	return join(profiles.basePath, selectedProfile);
 }

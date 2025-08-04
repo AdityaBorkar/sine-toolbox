@@ -2,11 +2,11 @@
 
 import { program } from "commander";
 
-import { createSineApp } from "./create-sine-app.ts";
+import { createSineMod } from "./create-sine-mod.js";
 
 program
-	.name("create-sine-app")
-	.description("Create a new Sine Toolbox project")
+	.name("create-sine-mod")
+	.description("Create a new Sine Mod project")
 	.argument(
 		"[project-name]",
 		"Name of the project to create (optional - will prompt if not provided)",
@@ -17,6 +17,6 @@ program
 		"Package manager to use (npm, yarn, pnpm, bun)",
 	)
 	.option("--skip-install", "Skip dependency installation")
-	.action(createSineApp);
+	.action(createSineMod);
 
 program.parse();

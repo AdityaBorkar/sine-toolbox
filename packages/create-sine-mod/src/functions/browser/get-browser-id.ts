@@ -7,11 +7,13 @@ const BROWSERS = {
 	zen: "Zen Browser",
 } as const;
 
+export type BrowserId = keyof typeof BROWSERS;
+
 const DEFAULT_BROWSER = "zen" as const;
 
-export async function getBrowserId(name?: string): Promise<string> {
+export async function getBrowserId(name?: BrowserId): Promise<BrowserId> {
 	if (name) {
-		if (Object.keys(BROWSERS).includes(name)) {
+		if (Object.keys(BROWSERS).includes(name as string)) {
 			logger.info(`Using browser: ${name}`);
 			return name;
 		}
@@ -19,7 +21,9 @@ export async function getBrowserId(name?: string): Promise<string> {
 		logger.info(`Available browsers: ${Object.keys(BROWSERS).join(", ")}`);
 	}
 
-	logger.info(`Using ${BROWSERS.zen} (Only Supported Browser for now)`);
+	logger.info(
+		`Using ${BROWSERS.zen} (Zen is the only supported browser for now)`,
+	);
 	return DEFAULT_BROWSER;
 
 	// logger.newline();
@@ -36,6 +40,5 @@ export async function getBrowserId(name?: string): Promise<string> {
 	// 		type: "list",
 	// 	},
 	// ]);
-
 	// return browser;
 }

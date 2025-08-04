@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"allowImportingTsExtensions": true,
 		"allowJs": true,
+		"baseUrl": ".",
 		"jsx": "react-jsx",
 		"lib": ["ESNext"],
 		"module": "Preserve",
@@ -12,7 +13,6 @@
 		"noImplicitOverride": true,
 		"noPropertyAccessFromIndexSignature": false,
 		"noUncheckedIndexedAccess": true,
-		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./*"],
 			"@/assets/*": ["./assets/*"]

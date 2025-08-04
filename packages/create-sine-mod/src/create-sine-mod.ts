@@ -2,7 +2,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { $, file, write } from "bun";
 
-import { getBrowserProfilePath } from "./functions/browser/get-profile-path.js";
+import { getProfilePath } from "./functions/browser/get-profile-path.js";
 import { getProjectName } from "./functions/get-project-name.js";
 import { getTemplateId } from "./functions/get-template-id.js";
 import {
@@ -15,15 +15,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const __templatesPath = join(__dirname, "../templates");
 
-interface CreateSineAppOptions {
+interface CreateSineModOptions {
 	template?: string;
 	packageManager?: string;
 	skipInstall?: boolean;
 }
 
-export async function createSineApp(
+export async function createSineMod(
 	name?: string,
-	options: CreateSineAppOptions = {},
+	options: CreateSineModOptions = {},
 ) {
 	const projectName = await getProjectName(name);
 	const projectPath = resolve(projectName);
@@ -31,7 +31,7 @@ export async function createSineApp(
 
 	logger.newline();
 	logger.log(
-		`🚀 Creating Sine App (${templateName}): "${projectName}" (${projectPath})`,
+		`🚀 Creating Sine Mod (${templateName}): "${projectName}" (${projectPath})`,
 	);
 
 	// Create project directory
@@ -97,7 +97,7 @@ export async function createSineApp(
 
 	// Setup browser profile
 	logger.newline();
-	const profilePath = await getBrowserProfilePath();
+	const profilePath = await getProfilePath();
 	if (profilePath) {
 		const packageJsonFile = file(packageJsonPath);
 		if (await packageJsonFile.exists()) {
@@ -114,7 +114,7 @@ export async function createSineApp(
 
 	// Success message
 	logger.newline();
-	logger.log("🎉 Sine app created successfully!");
+	logger.log("🎉 Sine mod created successfully!");
 	logger.newline();
 	logger.info("Next steps:");
 	logger.log(`\t• cd "${projectName}"`);
