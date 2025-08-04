@@ -1,0 +1,149 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run code checks
+        id: code-check
+        run: |
+          echo "Running code checks..."
+          if ! bun run check:code 2>&1 | tee code-check-output.txt; then
+            echo "code_check_failed=true" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "code_check_failed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run type checks
+        id: type-check
+        run: |
+          echo "Running type checks..."
+          if ! bun run check:types 2>&1 | tee type-check-output.txt; then
+            echo "type_check_failed=true" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "type_check_failed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run dry-run publish
+        id: publish-check
+        run: |
+          echo "Running dry-run publish..."
+          if ! bun run publish --dry-run 2>&1 | tee publish-check-output.txt; then
+            echo "publish_check_failed=true" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "publish_check_failed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Find existing comment
+        if: always()
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- PR-CHECKS -->'
+
+      - name: Prepare comment body
+        if: always()
+        id: prepare-comment
+        run: |
+          {
+            echo "comment-body<<EOF"
+            echo "<!-- PR-CHECKS -->"
+            echo "## 🔍 PR Checks Results"
+            echo ""
+            
+            # Code Check Results
+            echo "### Code Quality Check"
+            if [[ "${{ steps.code-check.outputs.code_check_failed }}" == "true" ]]; then
+              echo "❌ **Failed**"
+              echo ""
+              echo "<details>"
+              echo "<summary>Code check errors</summary>"
+              echo ""
+              echo '```'
+              cat code-check-output.txt 2>/dev/null || echo "Error output not available"
+              echo '```'
+              echo "</details>"
+            else
+              echo "✅ **Passed**"
+            fi
+            echo ""
+            
+            # Type Check Results
+            echo "### Type Check"
+            if [[ "${{ steps.type-check.outputs.type_check_failed }}" == "true" ]]; then
+              echo "❌ **Failed**"
+              echo ""
+              echo "<details>"
+              echo "<summary>Type check errors</summary>"
+              echo ""
+              echo '```'
+              cat type-check-output.txt 2>/dev/null || echo "Error output not available"
+              echo '```'
+              echo "</details>"
+            else
+              echo "✅ **Passed**"
+            fi
+            echo ""
+            
+            # Publish Check Results
+            echo "### Publish Check (Dry Run)"
+            if [[ "${{ steps.publish-check.outputs.publish_check_failed }}" == "true" ]]; then
+              echo "❌ **Failed**"
+              echo ""
+              echo "<details>"
+              echo "<summary>Publish check errors</summary>"
+              echo ""
+              echo '```'
+              cat publish-check-output.txt 2>/dev/null || echo "Error output not available"
+              echo '```'
+              echo "</details>"
+            else
+              echo "✅ **Passed**"
+            fi
+            echo ""
+            echo "---"
+            echo "*Last updated: ${{ github.event.pull_request.head.sha }}*"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create or update PR comment
+        if: always()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: ${{ steps.prepare-comment.outputs.comment-body }}
+
+      - name: Fail if any checks failed
+        if: always()
+        run: |
+          if [[ "${{ steps.code-check.outputs.code_check_failed }}" == "true" ]] || [[ "${{ steps.type-check.outputs.type_check_failed }}" == "true" ]] || [[ "${{ steps.publish-check.outputs.publish_check_failed }}" == "true" ]]; then
+            echo "One or more checks failed"
+            exit 1
+          fi

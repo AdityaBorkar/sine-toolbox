@@ -4,19 +4,33 @@
 		"name": "Aditya Borkar",
 		"url": "https://adityaborkar.com"
 	},
+	"bin": {
+		"create-sine-app": "./dist/src/index.cjs"
+	},
 	"bugs": {
 		"url": "https://github.com/AdityaBorkar/sine-toolbox/issues"
 	},
 	"dependencies": {
+		"@types/inquirer": "^9.0.8",
 		"arktype": "^2.1.20",
-		"commander": "^14.0.0"
+		"chalk": "^5.5.0",
+		"commander": "^14.0.0",
+		"inquirer": "^12.9.0",
+		"ora": "^8.2.0"
 	},
 	"description": "Create a Sine Toolbox project",
 	"devDependencies": {
 		"@types/bun": "latest",
 		"zshy": "^0.3.4"
 	},
-	"displayName": "Sine Toolbox",
+	"displayName": "Create Sine App",
+	"exports": {
+		".": {
+			"import": "./dist/src/index.js",
+			"require": "./dist/src/index.cjs",
+			"types": "./dist/src/index.d.cts"
+		}
+	},
 	"files": [
 		"LICENSE.md",
 		"./dist",
@@ -26,16 +40,17 @@
 	"homepage": "https://github.com/AdityaBorkar/sine-toolbox#readme",
 	"keywords": [
 		"create",
-		"sine-toolbox",
+		"sine-app",
 		"sine mods",
 		"zen mods"
 	],
 	"license": "MIT",
-	"module": "index.ts",
-	"name": "create-sine-toolbox",
+	"main": "./dist/src/index.cjs",
+	"module": "./dist/src/index.js",
+	"name": "create-sine-app",
 	"private": false,
 	"repository": {
-		"directory": "packages/create-sine-toolbox",
+		"directory": "packages/create-sine-app",
 		"type": "git",
 		"url": "https://github.com/AdityaBorkar/sine-toolbox"
 	},
@@ -43,10 +58,14 @@
 		"build": "zshy"
 	},
 	"type": "module",
+	"types": "./dist/src/index.d.cts",
 	"version": "0.0.1",
 	"zshy": {
 		"bin": {
-			"create-sine-toolbox": "./index.ts"
+			"create-sine-app": "./src/index.ts"
+		},
+		"exports": {
+			".": "./src/index.ts"
 		}
 	}
 }

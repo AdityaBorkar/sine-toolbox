@@ -28,13 +28,7 @@
 		}
 	},
 	"files": {
-		"includes": [
-			"**/*",
-			"!node_modules/**/*",
-			"!dist/**/*",
-			"!bun.lock",
-			"!packages/create-sine-app/templates/**/*"
-		]
+		"includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
 	},
 	"linter": {
 		"domains": {
@@ -43,7 +37,6 @@
 			"react": "all",
 			"solid": "none",
 			"test": "all"
-			// "vue": "none"
 		},
 		"rules": {
 			"a11y": "on",
