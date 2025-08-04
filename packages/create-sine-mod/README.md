@@ -4,12 +4,13 @@
 
 - Setup the Github Repository
 - Publishing Workflow (GitHub Actions)
+    - Provenance
+    - Conventional Commits
+    - Semantic Versioning
 - Publish the package to NPM
 
 ### TODOs
-
 ---
-
 - [ ] Zen Profile Detection in Linux
 - [ ] Zen Profile Detection in MacOS
 - [ ] Add support for other Browsers
