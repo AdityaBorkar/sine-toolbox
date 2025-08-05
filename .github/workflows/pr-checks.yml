@@ -6,12 +6,13 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  code-quality:
-    name: Code Quality
+  lint_format_check:
+    name: Lint & Format Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
       checks: write
+      statuses: write
 
     steps:
       - name: Checkout code
@@ -28,12 +29,26 @@ jobs:
       - name: Run code checks
         run: bun run check:code
 
-  type-check:
+      - name: Check for changes and commit
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add .
+            git commit -m "chore: auto-fix linting and formatting issues"
+            git push
+            echo "✅ Code formatting changes committed and pushed"
+          else
+            echo "✅ No formatting changes needed"
+          fi
+
+  type_check:
     name: Type Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
       checks: write
+      statuses: write
 
     steps:
       - name: Checkout code
@@ -50,12 +65,78 @@ jobs:
       - name: Run type checks
         run: bun run check:types
 
-  publish-check:
-    name: Publish Check
+  changelog_check:
+    name: Changelog Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
       checks: write
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changelog format
+        run: |
+          # Verify CHANGELOG.md exists
+          if [[ ! -f CHANGELOG.md ]]; then
+            echo "Error: CHANGELOG.md not found"
+            exit 1
+          fi
+
+          # Check if Unreleased section exists
+          if ! grep -q "## \[Unreleased\]" CHANGELOG.md; then
+            echo "Error: [Unreleased] section not found in CHANGELOG.md"
+            exit 1
+          fi
+
+          # Verify changelog follows Keep a Changelog format
+          if ! grep -q "The format is based on \[Keep a Changelog\]" CHANGELOG.md; then
+            echo "Warning: CHANGELOG.md should reference Keep a Changelog format"
+          fi
+
+          echo "✅ Changelog format is valid"
+
+      - name: Check if PR needs changelog entry
+        run: |
+          # Get PR title and check if it needs a changelog entry
+          PR_TITLE="${{ github.event.pull_request.title }}"
+
+          # Skip changelog check for certain types of changes
+          if [[ "$PR_TITLE" =~ ^(docs|ci|test|style|refactor): ]]; then
+            echo "PR type doesn't require changelog entry: $PR_TITLE"
+            exit 0
+          fi
+
+          # Check if there are changes to code files
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+
+          # Check if any source files were changed
+          if echo "$CHANGED_FILES" | grep -E '\.(ts|js|json)$' | grep -v test | grep -v spec; then
+            echo "Source files changed, checking for changelog updates..."
+
+            # Check if CHANGELOG.md was modified
+            if echo "$CHANGED_FILES" | grep -q "CHANGELOG.md"; then
+              echo "✅ CHANGELOG.md was updated"
+            else
+              echo "Warning: Consider updating CHANGELOG.md for this change"
+              echo "If this change affects users, please add an entry to the Unreleased section"
+            fi
+          else
+            echo "No source files changed, changelog update not required"
+          fi
+
+  publish_dry_run_check:
+    name: Publish Dry Run Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      statuses: write
 
     steps:
       - name: Checkout code

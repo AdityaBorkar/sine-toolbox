@@ -59,7 +59,7 @@
 		"build": "zshy",
 		"check:code": "biome check --write",
 		"check:types": "tsc --noEmit",
-		"publish": "npm publish --access public"
+		"publish": "bun publish --provenance"
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.cts",

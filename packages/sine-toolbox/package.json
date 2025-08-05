@@ -43,7 +43,7 @@
 		"check:code": "biome check --write --diagnostic-level=error",
 		"check:types": "tsc --noEmit",
 		"dev": "zshy --watch",
-		"publish": "bun publish"
+		"publish": "bun publish --provenance"
 	},
 	"type": "module",
 	"version": "0.0.1",

@@ -3,48 +3,66 @@ name: Publish to NPM
 on:
   push:
     tags:
-      - 'new-release'
+      - 'release-patch'
+      - 'release-minor'
+      - 'release-major'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
       - name: Install dependencies
         run: bun install
 
-      - name: Build sine-toolbox
+      - name: Determine version bump type
+        id: version-type
+        run: ./scripts/release/determine-version-type.sh
+
+      - name: Bump package versions
+        id: versions
+        run: ./scripts/release/bump-versions.js ${{ steps.version-type.outputs.bump_type }}
+
+      - name: Update changelog
+        run: ./scripts/release/update-changelog.sh ${{ steps.versions.outputs.sine_version }} ${{ steps.versions.outputs.release_date }}
+
+      - name: Build packages
         run: bun run build
-        working-directory: ./packages/sine-toolbox
 
-      - name: Build create-sine-app
-        run: bun run build
-        working-directory: ./packages/create-sine-app
-
-      - name: Publish sine-toolbox to NPM
-        run: bun publish --access public
-        working-directory: ./packages/sine-toolbox
+      - name: Publish packages
+        run: ./scripts/release/publish-packages.sh
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish create-sine-app to NPM
-        run: bun publish --access public
-        working-directory: ./packages/create-sine-app
+      # - name: Verify provenance
+      #   run: ./scripts/release/verify-provenance.sh ${{ steps.versions.outputs.sine_version }} ${{ steps.versions.outputs.create_version }}
+
+      - name: Create GitHub release
+        run: ./scripts/release/create-release.sh ${{ steps.versions.outputs.sine_version }} ${{ steps.versions.outputs.create_version }}
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Delete new-release tag
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git push --delete origin new-release
+      - name: Finalize release
+        run: ./scripts/release/cleanup.sh ${{ steps.versions.outputs.sine_version }} ${{ steps.versions.outputs.bump_type }} ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
