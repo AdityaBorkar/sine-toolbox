@@ -71,5 +71,13 @@
 		"exports": {
 			".": "./src/index.ts"
 		}
+	},
+	"engines": {
+		"node": ">=18.0.0",
+		"bun": ">=1.0.0"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	}
 }

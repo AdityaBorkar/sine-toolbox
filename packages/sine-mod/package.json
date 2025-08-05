@@ -5,7 +5,7 @@
 		"url": "https://adityaborkar.com"
 	},
 	"bin": {
-		"sine-toolbox": "./dist/src/cli/index.cjs"
+		"sine-mod": "./dist/src/cli/index.cjs"
 	},
 	"bugs": {
 		"url": "https://github.com/AdityaBorkar/sine-toolbox/issues"
@@ -14,11 +14,11 @@
 		"arktype": "^2.1.20",
 		"commander": "^14.0.0"
 	},
-	"description": "A collection of tools for Sine",
+	"description": "A UNOFFICIAL collection of tools for Sine",
 	"devDependencies": {
 		"@types/bun": "latest"
 	},
-	"displayName": "Sine Toolbox",
+	"displayName": "Sine Mod",
 	"exports": {
 		".": {
 			"import": "./dist/src/index.js",
@@ -42,10 +42,10 @@
 	"license": "MIT",
 	"main": "./dist/src/index.cjs",
 	"module": "./dist/src/index.js",
-	"name": "sine-toolbox",
+	"name": "sine-mod",
 	"private": false,
 	"repository": {
-		"directory": "packages/sine-toolbox",
+		"directory": "packages/sine-mod",
 		"type": "git",
 		"url": "https://github.com/AdityaBorkar/sine-toolbox"
 	},
@@ -60,10 +60,18 @@
 	"version": "0.0.1",
 	"zshy": {
 		"bin": {
-			"sine-toolbox": "./src/cli/index.ts"
+			"sine-mod": "./src/cli/index.ts"
 		},
 		"exports": {
 			".": "./src/index.ts"
 		}
+	},
+	"engines": {
+		"node": ">=18.0.0",
+		"bun": ">=1.0.0"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	}
 }
