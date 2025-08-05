@@ -63,7 +63,7 @@
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.cts",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"zshy": {
 		"bin": {
 			"create-sine-mod": "./src/index.ts"
