@@ -25,6 +25,10 @@
 		"@types/bun": "latest"
 	},
 	"displayName": "Create Sine Mod",
+	"engines": {
+		"bun": ">=1.0.0",
+		"node": ">=18.0.0"
+	},
 	"exports": {
 		".": {
 			"import": "./dist/src/index.js",
@@ -50,6 +54,10 @@
 	"module": "./dist/src/index.js",
 	"name": "create-sine-mod",
 	"private": false,
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
 	"repository": {
 		"directory": "packages/create-sine-mod",
 		"type": "git",
@@ -58,8 +66,8 @@
 	"scripts": {
 		"build": "zshy",
 		"check:code": "biome check",
-		"fix:code": "biome check --write",
-		"check:types": "tsc --noEmit"
+		"check:types": "tsc --noEmit",
+		"fix:code": "biome check --write"
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.cts",
@@ -71,13 +79,5 @@
 		"exports": {
 			".": "./src/index.ts"
 		}
-	},
-	"engines": {
-		"node": ">=18.0.0",
-		"bun": ">=1.0.0"
-	},
-	"publishConfig": {
-		"access": "public",
-		"registry": "https://registry.npmjs.org/"
 	}
 }

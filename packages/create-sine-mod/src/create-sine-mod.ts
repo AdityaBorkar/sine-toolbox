@@ -45,7 +45,7 @@ export async function createSineMod(
 	{
 		const spinner = logger.start("Copying template files...");
 
-		const commonPath = join(__templatesPath, "/common");
+		const commonPath = join(__templatesPath, "common");
 		logger.update("Copying common template files...");
 		await $`cp -r ${commonPath}/* ${projectPath}/`;
 
