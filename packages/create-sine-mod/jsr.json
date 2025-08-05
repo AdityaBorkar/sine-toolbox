@@ -1,0 +1,11 @@
+{
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"name": "create-sine-mod",
+	"publish": {
+		"exclude": ["dist"],
+		"include": ["src", "LICENSE.md", "package.json", "README.md", "templates"]
+	},
+	"version": "0.0.1"
+}

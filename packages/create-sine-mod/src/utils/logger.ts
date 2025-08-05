@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noConsole: Logging Function */
 import chalk from "chalk";
 import ora, { type Ora } from "ora";
 
@@ -16,22 +17,22 @@ export class Logger {
 
 	info(message: string) {
 		this.stopSpinner();
-		console.log(chalk.blue("i") + " " + chalk.bold(message));
+		console.log(`${chalk.blue("i")} ${chalk.bold(message)}`);
 	}
 
 	success(message: string) {
 		this.stopSpinner();
-		console.log(chalk.green("✅") + " " + message);
+		console.log(`${chalk.green("✅")} ${message}`);
 	}
 
 	error(message: string) {
 		this.stopSpinner();
-		console.log(chalk.red("❌") + " " + message);
+		console.log(`${chalk.red("❌")} ${message}`);
 	}
 
 	warn(message: string) {
 		this.stopSpinner();
-		console.log(chalk.yellow("⚠️") + "  " + message);
+		console.log(`${chalk.yellow("⚠️")} ${message}`);
 	}
 
 	log(message: string) {
@@ -42,26 +43,6 @@ export class Logger {
 	silentLog(message: string) {
 		console.log();
 		console.log(chalk.gray(message));
-	}
-
-	folder(message: string) {
-		this.stopSpinner();
-		console.log(chalk.blue("📁") + " " + message);
-	}
-
-	file(message: string) {
-		this.stopSpinner();
-		console.log(chalk.green("📝") + " " + message);
-	}
-
-	package(message: string) {
-		this.stopSpinner();
-		console.log(chalk.magenta("📦") + " " + message);
-	}
-
-	celebration(message: string) {
-		this.stopSpinner();
-		console.log(chalk.green("🎉") + " " + message);
 	}
 
 	start(message: string): Ora {

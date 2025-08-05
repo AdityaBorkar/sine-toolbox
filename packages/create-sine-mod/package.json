@@ -57,7 +57,10 @@
 		"url": "https://github.com/AdityaBorkar/sine-toolbox"
 	},
 	"scripts": {
-		"build": "zshy"
+		"build": "zshy",
+		"check:code": "biome check --write",
+		"check:types": "tsc --noEmit",
+		"publish": "npm publish --access public"
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.cts",

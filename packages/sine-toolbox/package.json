@@ -40,7 +40,11 @@
 		"url": "https://github.com/AdityaBorkar/sine-toolbox"
 	},
 	"scripts": {
-		"build": "zshy"
+		"build": "zshy",
+		"check:code": "biome check --write --diagnostic-level=error",
+		"check:types": "tsc --noEmit",
+		"dev": "zshy --watch",
+		"publish": "bun publish"
 	},
 	"type": "module",
 	"version": "0.0.1",

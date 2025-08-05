@@ -11,7 +11,7 @@ export type BrowserId = keyof typeof BROWSERS;
 
 const DEFAULT_BROWSER = "zen" as const;
 
-export async function getBrowserId(name?: BrowserId): Promise<BrowserId> {
+export function getBrowserId(name?: BrowserId): BrowserId {
 	if (name) {
 		if (Object.keys(BROWSERS).includes(name as string)) {
 			logger.info(`Using browser: ${name}`);

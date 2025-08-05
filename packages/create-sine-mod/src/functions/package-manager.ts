@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
 
+import { NPM_CONFIG_USER_AGENT } from "../utils/env.js";
 import { logger } from "../utils/logger.js";
 
 type PackageManager = "bun" | "yarn" | "pnpm" | "npm";
@@ -7,7 +8,7 @@ type PackageManager = "bun" | "yarn" | "pnpm" | "npm";
 const PACKAGE_MANAGERS = ["bun", "yarn", "pnpm", "npm"] as const;
 
 export function detectPackageManager(): PackageManager | null {
-	const userAgent = process.env.npm_config_user_agent;
+	const userAgent = NPM_CONFIG_USER_AGENT;
 	if (userAgent?.includes("bun")) {
 		return "bun";
 	}

@@ -1,0 +1,11 @@
+{
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"name": "sine-toolbox",
+	"publish": {
+		"exclude": ["**/tests/**", "dist"],
+		"include": ["src", "LICENSE.md", "package.json", "README.md"]
+	},
+	"version": "0.0.1"
+}

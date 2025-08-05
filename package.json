@@ -8,8 +8,6 @@
 	"private": true,
 	"scripts": {
 		"build": "",
-		"check:code": "biome check --fix --diagnostic-level=error",
-		"check:types": "tsc --noEmit",
 		"publish": ""
 	},
 	"workspaces": [
