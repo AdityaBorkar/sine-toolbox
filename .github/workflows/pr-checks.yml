@@ -65,8 +65,8 @@ jobs:
       - name: Run type checks
         run: bun run check:types
 
-  changelog_check:
-    name: Changelog Check
+  changeset_check:
+    name: Changeset Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,59 +79,56 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check changelog format
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Check if PR needs changeset
         run: |
-          # Verify CHANGELOG.md exists
-          if [[ ! -f CHANGELOG.md ]]; then
-            echo "Error: CHANGELOG.md not found"
-            exit 1
-          fi
-
-          # Check if Unreleased section exists
-          if ! grep -q "## \[Unreleased\]" CHANGELOG.md; then
-            echo "Error: [Unreleased] section not found in CHANGELOG.md"
-            exit 1
-          fi
-
-          # Verify changelog follows Keep a Changelog format
-          if ! grep -q "The format is based on \[Keep a Changelog\]" CHANGELOG.md; then
-            echo "Warning: CHANGELOG.md should reference Keep a Changelog format"
-          fi
-
-          echo "✅ Changelog format is valid"
-
-      - name: Check if PR needs changelog entry
-        run: |
-          # Get PR title and check if it needs a changelog entry
+          # Skip changeset check for release PRs created by changesets
           PR_TITLE="${{ github.event.pull_request.title }}"
-
-          # Skip changelog check for certain types of changes
-          if [[ "$PR_TITLE" =~ ^(docs|ci|test|style|refactor): ]]; then
-            echo "PR type doesn't require changelog entry: $PR_TITLE"
+          if [[ "$PR_TITLE" == *"Version Packages"* ]] || [[ "$PR_TITLE" == *"chore: release"* ]]; then
+            echo "✅ Skipping changeset check for release PR"
             exit 0
           fi
 
-          # Check if there are changes to code files
+          # Check if there are changes to source files
           git fetch origin main
           CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
 
-          # Check if any source files were changed
-          if echo "$CHANGED_FILES" | grep -E '\.(ts|js|json)$' | grep -v test | grep -v spec; then
-            echo "Source files changed, checking for changelog updates..."
-
-            # Check if CHANGELOG.md was modified
-            if echo "$CHANGED_FILES" | grep -q "CHANGELOG.md"; then
-              echo "✅ CHANGELOG.md was updated"
-            else
-              echo "Warning: Consider updating CHANGELOG.md for this change"
-              echo "If this change affects users, please add an entry to the Unreleased section"
-            fi
-          else
-            echo "No source files changed, changelog update not required"
+          # Skip check if only docs, config, or test files changed
+          if ! echo "$CHANGED_FILES" | grep -E 'packages/.+\.(ts|js)$' | grep -v test | grep -v spec | head -1; then
+            echo "✅ No source code changes detected, changeset not required"
+            exit 0
           fi
 
-  publish_dry_run_check:
-    name: Publish Dry Run Check
+          echo "Source code changes detected, checking for changeset..."
+
+          # Check if changeset files exist
+          if ls .changeset/*.md >/dev/null 2>&1; then
+            CHANGESET_COUNT=$(ls -1 .changeset/*.md 2>/dev/null | wc -l)
+            if [ "$CHANGESET_COUNT" -gt 0 ]; then
+              echo "✅ Found $CHANGESET_COUNT changeset file(s)"
+              exit 0
+            fi
+          fi
+
+          echo "❌ No changeset found!"
+          echo "Please add a changeset to describe your changes:"
+          echo "  bun run changeset:add"
+          echo ""
+          echo "This helps with:"
+          echo "- Automatic version bumping"
+          echo "- Changelog generation"
+          echo "- Release notes"
+          exit 1
+
+  build_check:
+    name: Build Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -150,5 +147,5 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Run dry-run publish
-        run: bun run publish
+      - name: Build packages
+        run: bun run build

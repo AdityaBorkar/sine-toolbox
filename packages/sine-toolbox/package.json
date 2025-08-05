@@ -4,6 +4,9 @@
 		"name": "Aditya Borkar",
 		"url": "https://adityaborkar.com"
 	},
+	"bin": {
+		"sine-toolbox": "./dist/src/cli/index.cjs"
+	},
 	"bugs": {
 		"url": "https://github.com/AdityaBorkar/sine-toolbox/issues"
 	},
@@ -16,6 +19,13 @@
 		"@types/bun": "latest"
 	},
 	"displayName": "Sine Toolbox",
+	"exports": {
+		".": {
+			"import": "./dist/src/index.js",
+			"require": "./dist/src/index.cjs",
+			"types": "./dist/src/index.d.cts"
+		}
+	},
 	"files": [
 		"LICENSE.md",
 		"./dist",
@@ -30,6 +40,7 @@
 		"tools"
 	],
 	"license": "MIT",
+	"main": "./dist/src/index.cjs",
 	"module": "./dist/src/index.js",
 	"name": "sine-toolbox",
 	"private": false,
@@ -40,12 +51,12 @@
 	},
 	"scripts": {
 		"build": "zshy",
-		"check:code": "biome check --write --diagnostic-level=error",
-		"check:types": "tsc --noEmit",
-		"dev": "zshy --watch",
-		"publish": "bun publish --provenance"
+		"check:code": "biome check",
+		"fix:code": "biome check --write",
+		"check:types": "tsc --noEmit"
 	},
 	"type": "module",
+	"types": "./dist/src/index.d.cts",
 	"version": "0.0.1",
 	"zshy": {
 		"bin": {
@@ -54,17 +65,5 @@
 		"exports": {
 			".": "./src/index.ts"
 		}
-	},
-	"main": "./dist/src/index.cjs",
-	"types": "./dist/src/index.d.cts",
-	"exports": {
-		".": {
-			"types": "./dist/src/index.d.cts",
-			"import": "./dist/src/index.js",
-			"require": "./dist/src/index.cjs"
-		}
-	},
-	"bin": {
-		"sine-toolbox": "./dist/src/cli/index.cjs"
 	}
 }

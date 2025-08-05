@@ -27,9 +27,9 @@
 	"displayName": "Create Sine Mod",
 	"exports": {
 		".": {
-			"types": "./dist/src/index.d.cts",
 			"import": "./dist/src/index.js",
-			"require": "./dist/src/index.cjs"
+			"require": "./dist/src/index.cjs",
+			"types": "./dist/src/index.d.cts"
 		}
 	},
 	"files": [
@@ -57,9 +57,9 @@
 	},
 	"scripts": {
 		"build": "zshy",
-		"check:code": "biome check --write",
-		"check:types": "tsc --noEmit",
-		"publish": "bun publish --provenance"
+		"check:code": "biome check",
+		"fix:code": "biome check --write",
+		"check:types": "tsc --noEmit"
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.cts",
