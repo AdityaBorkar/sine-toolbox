@@ -46,18 +46,12 @@ export async function createSineMod(
 		const spinner = logger.start("Copying template files...");
 
 		const commonPath = join(__templatesPath, "common");
-		const commonDir = file(commonPath);
-		if (await commonDir.exists()) {
-			logger.update("Copying common template files...");
-			await $`cp -r ${commonPath}/* ${projectPath}/`;
-		}
+		logger.update("Copying common template files...");
+		await $`cp -r ${commonPath}/* ${projectPath}/`;
 
 		const templatePath = join(__templatesPath, templateName);
-		const templateDir = file(templatePath);
-		if (await templateDir.exists()) {
-			logger.update(`Copying "${templateName}" template files...`);
-			await $`cp -r ${templatePath}/* ${projectPath}/`;
-		}
+		logger.update(`Copying "${templateName}" template files...`);
+		await $`cp -r ${templatePath}/* ${projectPath}/`;
 
 		spinner.succeed("Template files copied successfully");
 	}
@@ -69,7 +63,7 @@ export async function createSineMod(
 		const packageJson = await packageJsonFile.json();
 		packageJson.name = projectName;
 		await write(packageJsonPath, JSON.stringify(packageJson, null, 2));
-		logger.file("Updated package.json with project name");
+		logger.info("Updated package.json with project name");
 	}
 
 	// Skip installation if requested
@@ -104,7 +98,7 @@ export async function createSineMod(
 			const packageJson = await packageJsonFile.json();
 			packageJson.browser_profiles = [profilePath];
 			await write(packageJsonPath, JSON.stringify(packageJson, null, 2));
-			logger.file("Updated package.json with browser profile");
+			logger.info("Updated package.json with browser profile");
 		}
 	} else {
 		logger.warn(

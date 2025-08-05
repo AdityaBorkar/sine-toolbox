@@ -5,26 +5,20 @@
 		"url": "https://adityaborkar.com"
 	},
 	"bin": {
-		"create-sine-mod": "./dist/src/index.cjs"
+		"sine-mod": "./dist/src/cli/index.cjs"
 	},
 	"bugs": {
 		"url": "https://github.com/AdityaBorkar/sine-toolbox/issues"
 	},
 	"dependencies": {
-		"@types/inquirer": "^9.0.8",
 		"arktype": "^2.1.20",
-		"chalk": "^5.5.0",
-		"commander": "^14.0.0",
-		"inquirer": "^12.9.0",
-		"ora": "^8.2.0",
-		"regedit": "^5.1.3",
-		"winreg": "^1.2.5"
+		"commander": "^14.0.0"
 	},
-	"description": "Create a Sine Toolbox project",
+	"description": "A UNOFFICIAL collection of tools for Sine",
 	"devDependencies": {
 		"@types/bun": "latest"
 	},
-	"displayName": "Create Sine Mod",
+	"displayName": "Sine Mod",
 	"engines": {
 		"bun": ">=1.0.0",
 		"node": ">=18.0.0"
@@ -44,22 +38,22 @@
 	],
 	"homepage": "https://github.com/AdityaBorkar/sine-toolbox#readme",
 	"keywords": [
-		"create",
-		"sine-mod",
 		"sine mods",
-		"zen mods"
+		"zen mods",
+		"toolbox",
+		"tools"
 	],
 	"license": "MIT",
 	"main": "./dist/src/index.cjs",
 	"module": "./dist/src/index.js",
-	"name": "create-sine-mod",
+	"name": "sine-mod",
 	"private": false,
 	"publishConfig": {
 		"access": "public",
 		"registry": "https://registry.npmjs.org/"
 	},
 	"repository": {
-		"directory": "packages/create-sine-mod",
+		"directory": "packages/sine-mod",
 		"type": "git",
 		"url": "https://github.com/AdityaBorkar/sine-toolbox"
 	},
@@ -71,10 +65,10 @@
 	},
 	"type": "module",
 	"types": "./dist/src/index.d.cts",
-	"version": "0.0.2",
+	"version": "0.0.1",
 	"zshy": {
 		"bin": {
-			"create-sine-mod": "./src/index.ts"
+			"sine-mod": "./src/cli/index.ts"
 		},
 		"exports": {
 			".": "./src/index.ts"

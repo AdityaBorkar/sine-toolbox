@@ -2,6 +2,7 @@ import { exists, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { $, file } from "bun";
 
+import { USER, USERPROFILE } from "../../utils/env.js";
 import { logger } from "../../utils/logger.js";
 import type { PlatformInfo } from "../platform.js";
 
@@ -91,38 +92,33 @@ function toWslPath(path: string): string {
 const WINDOWS_PATH_REGEX = /^[A-Z]:\\/;
 
 async function getWindowsUserProfile(isWsl: boolean): Promise<string | null> {
-	if (isWsl) {
-		try {
-			// Get Windows user profile path from WSL
-			const result = await $`cmd.exe /c "echo %USERPROFILE%"`.text();
-			const windowsPath = result.trim();
+	if (!isWsl) {
+		const userProfile = USERPROFILE;
+		return userProfile || null;
+	}
 
-			// Convert Windows path to WSL path
-			if (windowsPath.match(WINDOWS_PATH_REGEX)) {
-				const drive = windowsPath[0].toLowerCase();
-				const rest = windowsPath.slice(3).replace(/\\/g, "/");
-				return join("/mnt", drive, rest);
-			}
-		} catch {
-			// Fallback: try common patterns
-			const commonUsers = ["User", process.env.USER || ""];
-			for (const user of commonUsers) {
-				if (user) {
-					const testPath = `/mnt/c/Users/${user}`;
-					try {
-						const testFile = file(testPath);
-						if (await testFile.exists()) {
-							return testPath;
-						}
-					} catch {}
+	try {
+		// Get Windows user profile path from WSL
+		const result = await $`cmd.exe /c "echo %USERPROFILE%"`.text();
+		const windowsPath = result.trim();
+
+		// Convert Windows path to WSL path
+		if (windowsPath.match(WINDOWS_PATH_REGEX)) {
+			const drive = windowsPath[0].toLowerCase();
+			const rest = windowsPath.slice(3).replace(/\\/g, "/");
+			return join("/mnt", drive, rest);
+		}
+	} catch {
+		// Fallback: try common patterns
+		const commonUsers = ["User", USER || ""];
+		for (const user of commonUsers) {
+			if (user) {
+				const testPath = `/mnt/c/Users/${user}`;
+				const testFile = file(testPath);
+				if (await testFile.exists()) {
+					return testPath;
 				}
 			}
-		}
-	} else {
-		// Running on native Windows
-		const userProfile = process.env.USERPROFILE;
-		if (userProfile) {
-			return userProfile;
 		}
 	}
 

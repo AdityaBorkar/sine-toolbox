@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.6/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
 	"assist": {
 		"actions": {
 			"source": {
@@ -28,29 +28,18 @@
 		}
 	},
 	"files": {
-		"includes": [
-			"**/*",
-			"!node_modules/**/*",
-			"!dist/**/*",
-			"!bun.lock",
-			"!packages/create-sine-app/templates/**/*"
-		]
+		"includes": ["**/*", "!node_modules/**/*", "!dist/**/*", "!bun.lock"]
 	},
 	"linter": {
 		"domains": {
-			"next": "none",
 			"project": "all",
-			"react": "all",
-			"solid": "none",
 			"test": "all"
-			// "vue": "none"
 		},
 		"rules": {
 			"a11y": "on",
 			"complexity": "on",
 			"correctness": {
 				"noNodejsModules": "off",
-				"noUndeclaredVariables": "on",
 				"recommended": true
 			},
 			"nursery": {
@@ -59,16 +48,7 @@
 			"performance": "on",
 			"security": "on",
 			"style": "on",
-			"suspicious": {
-				"noConsole": "off",
-				"recommended": true
-			}
+			"suspicious": "on"
 		}
-	},
-	"vcs": {
-		"clientKind": "git",
-		"defaultBranch": "main",
-		"enabled": true,
-		"useIgnoreFile": true
 	}
 }

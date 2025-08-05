@@ -29,9 +29,9 @@ export async function getConfig(): Promise<{
 
 	const packageJsonFile = file(join(process.cwd(), "package.json"));
 	if (await packageJsonFile.exists()) {
-		const packageJson = await packageJsonFile.json();
-		const theme = packageJson["theme.json"];
-		const preferences = packageJson["preferences.json"];
+		// const packageJson = await packageJsonFile.json();
+		// const theme = packageJson["theme.json"];
+		// const preferences = packageJson["preferences.json"];
 		// return packageJson
 	}
 
