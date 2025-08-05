@@ -13,8 +13,7 @@
 	},
 	"description": "A collection of tools for Sine",
 	"devDependencies": {
-		"@types/bun": "latest",
-		"zshy": "^0.3.4"
+		"@types/bun": "latest"
 	},
 	"displayName": "Sine Toolbox",
 	"files": [
@@ -31,7 +30,7 @@
 		"tools"
 	],
 	"license": "MIT",
-	"module": "index.ts",
+	"module": "./dist/src/index.js",
 	"name": "sine-toolbox",
 	"private": false,
 	"repository": {
@@ -51,6 +50,21 @@
 	"zshy": {
 		"bin": {
 			"sine-toolbox": "./src/cli/index.ts"
+		},
+		"exports": {
+			".": "./src/index.ts"
 		}
+	},
+	"main": "./dist/src/index.cjs",
+	"types": "./dist/src/index.d.cts",
+	"exports": {
+		".": {
+			"types": "./dist/src/index.d.cts",
+			"import": "./dist/src/index.js",
+			"require": "./dist/src/index.cjs"
+		}
+	},
+	"bin": {
+		"sine-toolbox": "./dist/src/cli/index.cjs"
 	}
 }

@@ -26,7 +26,6 @@
       },
       "devDependencies": {
         "@types/bun": "latest",
-        "zshy": "^0.3.4",
       },
     },
     "packages/sine-toolbox": {
@@ -38,7 +37,6 @@
       },
       "devDependencies": {
         "@types/bun": "latest",
-        "zshy": "^0.3.4",
       },
     },
   },

@@ -7,8 +7,10 @@
 	"name": "sine-toolbox-monorepo",
 	"private": true,
 	"scripts": {
-		"build": "",
-		"publish": ""
+		"build": "bun run --filter '*' build",
+		"check:code": "bun run --filter '*' check:code",
+		"check:types": "bun run --filter '*' check:types",
+		"publish": "bun run --filter '*' publish --dry-run"
 	},
 	"workspaces": [
 		"packages/*"
