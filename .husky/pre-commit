@@ -1,0 +1,59 @@
+#!/bin/sh
+# Pre-commit hook: Run linting, formatting, and changelog protection
+
+echo "🔄 Running pre-commit hooks..."
+
+# Check if CHANGELOG.md is being modified directly
+if git diff --cached --name-only | grep -q "^CHANGELOG\.md$"; then
+  echo "❌ Direct modifications to CHANGELOG.md are not allowed!"
+  echo "   Changelog entries are generated automatically from conventional commits."
+  echo "   Please remove CHANGELOG.md from your staged changes."
+  exit 1
+fi
+
+# Run existing linting and type checking
+echo "📋 Running lint and type checks..."
+bun run check:code
+if [ $? -ne 0 ]; then
+  echo "❌ Linting failed"
+  exit 1
+fi
+
+bun run check:types
+if [ $? -ne 0 ]; then
+  echo "❌ Type checking failed"
+  exit 1
+fi
+
+# Run lint-staged for file formatting
+echo "✨ Formatting staged files..."
+bunx lint-staged
+
+# Generate changelog from conventional commits if there are staged changes
+if git diff --cached --quiet; then
+  echo "ℹ️  No staged changes, skipping changelog generation"
+else
+  echo "📝 Generating changelog..."
+  
+  # Generate changelog and capture output
+  changelog_output=$(bunx changelogen --no-output 2>&1)
+  changelog_exit_code=$?
+  
+  if [ $changelog_exit_code -eq 0 ] && [ -n "$changelog_output" ]; then
+    # Only update changelog if there are actual changes
+    if [ "$changelog_output" != "No changes detected" ] && [ "$changelog_output" != "" ]; then
+      echo "📄 Updating CHANGELOG.md..."
+      bunx changelogen --output CHANGELOG.md
+      
+      # Stage the updated changelog if it was created/modified
+      if [ -f "CHANGELOG.md" ]; then
+        git add CHANGELOG.md
+        echo "✅ CHANGELOG.md updated and staged"
+      fi
+    else
+      echo "ℹ️  No changelog updates needed"
+    fi
+  fi
+fi
+
+echo "✅ Pre-commit hooks completed successfully"

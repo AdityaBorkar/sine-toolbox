@@ -1,0 +1,20 @@
+{
+  "types": {
+    "feat": { "title": "🚀 Features" },
+    "fix": { "title": "🐛 Bug Fixes" },
+    "perf": { "title": "⚡ Performance Improvements" },
+    "refactor": { "title": "♻️  Refactors" },
+    "docs": { "title": "📖 Documentation" },
+    "build": { "title": "📦 Build System" },
+    "ci": { "title": "🤖 CI/CD" },
+    "chore": { "title": "🏠 Chore" },
+    "test": { "title": "✅ Tests" },
+    "style": { "title": "🎨 Style" }
+  },
+  "contributors": true,
+  "excludeCommitPatterns": [
+    "^(chore|ci|style): .*",
+    "^Merge .*",
+    "^Update .*\\.md$"
+  ]
+}
