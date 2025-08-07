@@ -5,7 +5,7 @@ import chalk from "chalk";
 import ora from "ora";
 import prompts from "prompts";
 
-const PACKAGE_PATHS = ["./packages/create-sine-mod", "./packages/sine-mod"];
+const PACKAGE_PATHS = ["packages/create-sine-mod", "packages/sine-mod"];
 const cerebras = new Cerebras({ apiKey: process.env.CEREBRAS_API_KEY });
 
 // @ts-expect-error import.meta is not supported.
@@ -60,7 +60,7 @@ async function main(): Promise<void> {
 		}
 
 		// Check git status
-		const monorepoPaths = `. ${PACKAGE_PATHS.map((p) => `":(exclude)${p}"`).join(" ")}`;
+		const monorepoPaths = `!(${PACKAGE_PATHS.join("|")})/**`;
 		const status = await $`git status --porcelain ${monorepoPaths}`.text();
 		const diff = await $`git diff --cached ${monorepoPaths}`.text();
 
@@ -196,7 +196,7 @@ async function generateCommitMessage(props: {
 	const PROMPT = `You are a senior developer tasked to generate only commit message. Your task is to generate a conventional commit message based on the git changes provided.
 
 Follow these rules when generating the commit message:
-1. Use the conventional commits format: type(scope): description
+1. Use the conventional commits format: type: description
 2. Choose from these types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 3. Keep the description under 50 characters
 4. Use imperative mood (e.g., "add", "fix", "update" instead of "added", "fixed", "updated")
@@ -218,7 +218,7 @@ To choose the commit type:
 - Use "ci" for CI configuration changes
 - Use "chore" for other changes that don't modify src or test files
 
-Determine the scope based on the affected area of the codebase (e.g., component name, module, or feature). If the scope applies to entire repository, skip the scope.
+Do not include the scope in the commit message.
 `;
 
 	const PROMPT_DATA = `Monorepo:
@@ -242,35 +242,21 @@ ${packages
 `;
 
 	const stream = await cerebras.chat.completions.create({
-		max_completion_tokens: 10000,
+		max_completion_tokens: 1000,
 		messages: [
 			{ content: PROMPT, role: "system" },
 			{ content: PROMPT_DATA, role: "user" },
 		],
 		model: "gpt-oss-120b",
-		response_format: {
-			type: "json_schema",
-			json_schema: {
-				name: "commit",
-				schema: {
-					type: "object",
-					properties: {
-						message: { type: "string" },
-					},
-					required: ["message"],
-					additionalProperties: false,
-				},
-			},
-		},
 		reasoning_effort: "medium",
 		stream: false,
 		temperature: 1,
 		n: 1,
 		top_p: 1,
 	});
-	const commit = JSON.parse(stream.choices[0]?.message.content || "{}");
-	if (!commit.message) {
+	const commit = stream.choices[0]?.message.content?.trim();
+	if (!commit) {
 		throw new Error("No response from AI");
 	}
-	return commit.message as string;
+	return commit;
 }

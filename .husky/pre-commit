@@ -26,14 +26,13 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Keep separate Changelogs
-# # Check if CHANGELOG.md is being modified directly
-# if git diff --cached --name-only | grep -q "^CHANGELOG\.md$"; then
-#   echo "❌ Direct modifications to CHANGELOG.md are not allowed!"
-#   echo "   Changelog entries are generated automatically from conventional commits."
-#   echo "   Please remove CHANGELOG.md from your staged changes."
-#   exit 1
-# fi
+# Validate CHANGELOG.md changes
+echo "📋 Validating CHANGELOG.md..."
+bun run scripts/validate-changelog.ts
+if [ $? -ne 0 ]; then
+  echo "❌ CHANGELOG.md validation failed"
+  exit 1
+fi
 
 # # Generate changelog from conventional commits if there are staged changes
 # if git diff --cached --quiet; then

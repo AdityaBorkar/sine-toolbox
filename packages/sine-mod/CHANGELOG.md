@@ -4,8 +4,10 @@ Keep a changelog of the project.
 
 ## UNRELEASED
 
-- **docs(sine-mod): add changelog and improve docs**
-  Introduce a changelog file, update the README title, correct biome and TypeScript config paths, and delete the .npmrc with an auth token to enhance documentation and repository hygiene.
+- **docs(sine-mod): clarify changelog entry for docs update**
+  Updated the CHANGELOG.md to remove a redundant scoped entry and improve the wording of the documentation update note, making the log clearer and more consistent.
+- **docs(sine-mod): clarify changelog entry for docs update**
+  The changelog was revised to remove a redundant scoped entry and improve the wording of the documentation update note, making the log clearer and more consistent.
 - **docs: add changelog and improve docs**
   Introduce a project changelog to track future releases, replace the placeholder README with a proper title, and update configuration paths for biome and TypeScript settings. The old .npmrc containing an auth token is also removed. These changes enhance documentation, streamline config references, and improve repository hygiene.
 - **ci: add markdown linting and improve CI checks**

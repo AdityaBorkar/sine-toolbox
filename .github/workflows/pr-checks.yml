@@ -165,6 +165,148 @@ jobs:
       - name: Run markdown lint
         run: bun run check:md
 
+  changelog_validation:
+    name: Changelog Validation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Validate CHANGELOG.md changes
+        run: |
+          # Skip validation for release PRs created by changesets
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ "$PR_TITLE" == *"Version Packages"* ]] || [[ "$PR_TITLE" == *"chore: release"* ]]; then
+            echo "✅ Skipping changelog validation for release PR"
+            exit 0
+          fi
+
+          # Check if CHANGELOG.md is modified
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          
+          if ! echo "$CHANGED_FILES" | grep -q "^CHANGELOG\.md$"; then
+            echo "ℹ️  CHANGELOG.md not modified, skipping validation"
+            exit 0
+          fi
+
+          echo "📋 Validating CHANGELOG.md changes..."
+          
+          # Create a temporary script to validate against the base branch
+          cat > validate-pr-changelog.ts << 'EOF'
+          import { execSync } from "child_process";
+          import { readFileSync, existsSync } from "fs";
+          import { resolve } from "path";
+
+          const CHANGELOG_PATH = resolve("CHANGELOG.md");
+
+          try {
+            if (!existsSync(CHANGELOG_PATH)) {
+              console.log("ℹ️  No CHANGELOG.md found");
+              process.exit(0);
+            }
+
+            // Get diff against main branch
+            const changelogDiff = execSync("git diff origin/main...HEAD --unified=0 CHANGELOG.md", { 
+              encoding: "utf-8" 
+            });
+
+            if (!changelogDiff.trim()) {
+              console.log("ℹ️  No changes in CHANGELOG.md");
+              process.exit(0);
+            }
+
+            // Parse modified lines from PR diff
+            const modifiedLines: number[] = [];
+            const lines = changelogDiff.split("\n");
+
+            for (const line of lines) {
+              const hunkMatch = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/);
+              if (hunkMatch) {
+                const startLine = parseInt(hunkMatch[1], 10);
+                const lineCount = hunkMatch[2] ? parseInt(hunkMatch[2], 10) : 1;
+                for (let i = 0; i < lineCount; i++) {
+                  modifiedLines.push(startLine + i);
+                }
+              }
+            }
+
+            if (modifiedLines.length === 0) {
+              console.log("ℹ️  No content changes detected");
+              process.exit(0);
+            }
+
+            // Find UNRELEASED section boundaries
+            const content = readFileSync(CHANGELOG_PATH, "utf-8");
+            const contentLines = content.split("\n");
+            let unreleasedStart = -1;
+            let unreleasedEnd = contentLines.length;
+
+            for (let i = 0; i < contentLines.length; i++) {
+              const line = contentLines[i].trim();
+              if (line.match(/^##\s+UNRELEASED/i)) {
+                unreleasedStart = i + 1;
+                break;
+              }
+            }
+
+            if (unreleasedStart === -1) {
+              throw new Error("UNRELEASED section not found");
+            }
+
+            for (let i = unreleasedStart; i < contentLines.length; i++) {
+              const line = contentLines[i].trim();
+              if (line.startsWith("## ") && !line.match(/^##\s+UNRELEASED/i)) {
+                unreleasedEnd = i - 1;
+                break;
+              }
+            }
+
+            // Convert to 1-indexed
+            const boundaries = {
+              start: unreleasedStart + 1,
+              end: unreleasedEnd + 1
+            };
+
+            // Check if all changes are within UNRELEASED
+            const invalidLines = [...new Set(modifiedLines)].filter(
+              lineNum => lineNum < boundaries.start || lineNum > boundaries.end
+            );
+
+            if (invalidLines.length > 0) {
+              console.error("❌ CHANGELOG.md validation failed!");
+              console.error(`🚫 Changes detected outside UNRELEASED section:`);
+              console.error(`   Modified lines: ${invalidLines.join(", ")}`);
+              console.error(`   UNRELEASED section: lines ${boundaries.start}-${boundaries.end}`);
+              console.error("✅ Please only modify content within the UNRELEASED section.");
+              process.exit(1);
+            }
+
+            console.log("✅ CHANGELOG.md validation passed");
+            console.log(`   All changes within UNRELEASED section (lines ${boundaries.start}-${boundaries.end})`);
+          } catch (error) {
+            console.error("❌ Error validating CHANGELOG.md:", error instanceof Error ? error.message : String(error));
+            process.exit(1);
+          }
+          EOF
+
+          bun run validate-pr-changelog.ts
+
   build_check:
     name: Build Check
     runs-on: ubuntu-latest
