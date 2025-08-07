@@ -1,0 +1,38 @@
+{
+	"globs": [
+		"**/*.md",
+		"!**/LICENSE.md",
+		"!**/CLAUDE.md",
+		"!**/node_modules/**/*",
+		"!**/dist/**/*",
+		"!**/.claude/**/*"
+	],
+	"config": {
+		"default": true,
+		"line-length": false,
+		"code-block-style": {
+			"style": "fenced"
+		},
+		"emphasis-style": {
+			"style": "asterisk"
+		},
+		"strong-style": {
+			"style": "asterisk"
+		}
+		// "no-duplicate-heading": {
+		// 	"siblings_only": true // MD024 - Allow duplicate headings in different sections
+		// },
+		// "no-inline-html": false, // MD033 - Allow HTML in markdown (useful for badges, etc.)
+		// "first-line-heading": false, // MD041 - Don't require first line to be heading (allows frontmatter)
+		// "no-emphasis-as-heading": true, // MD036 - Don't use emphasis as heading
+		// "no-space-in-emphasis": true, // MD037 - No spaces inside emphasis markers
+		// "no-space-in-code": true, // MD038 - No spaces inside code spans
+		// "no-space-in-links": true, // MD039 - No spaces inside link text
+		// "fenced-code-language": false, // MD040 - Don't require language for fenced code blocks
+		// "first-line-h1": false, // MD041 - Don't require first line to be H1
+		// "no-empty-links": true, // MD042 - No empty links
+		// "required-headings": false, // MD043 - Don't require specific headings
+		// "proper-names": false, // MD044 - Don't enforce proper names (too restrictive)
+		// "no-alt-text": true, // MD045 - Images should have alt text
+	}
+}

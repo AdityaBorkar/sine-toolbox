@@ -4,6 +4,6 @@
 		"rootDir": "."
 	},
 	"exclude": ["node_modules", "dist", "templates"],
-	"extends": "../../tsconfig.base.json",
+	"extends": "../../configs/tsconfig.base.json",
 	"include": ["src/**/*"]
 }

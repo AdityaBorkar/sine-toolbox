@@ -57,7 +57,7 @@ The basic template includes:
 
 After creating your project, you'll have:
 
-```
+```text
 my-sine-mod/
 ├── README.md
 ├── package.json
@@ -73,17 +73,20 @@ my-sine-mod/
 Once your project is created:
 
 1. **Install dependencies** (if not done automatically):
+
    ```bash
    cd my-sine-mod
    npm install  # or yarn/pnpm/bun install
    ```
 
 2. **Start development server**:
+
    ```bash
    npm run dev  # or yarn/pnpm/bun dev
    ```
 
 3. **Build for production**:
+
    ```bash
    npm run build  # or yarn/pnpm/bun build
    ```
@@ -91,9 +94,11 @@ Once your project is created:
 ## Browser Support
 
 Currently supports:
+
 - **Zen Browser** - Full support with automatic profile detection
 
 Platform support:
+
 - ✅ **Windows** - Full support including WSL
 - ✅ **macOS** - WIP. Help needed!
 - ✅ **Linux** - WIP. Help needed!

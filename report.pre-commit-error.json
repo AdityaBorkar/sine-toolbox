@@ -1,0 +1,6 @@
+{
+  "exitCode": 128,
+  "stdout": "",
+  "stderr": "fatal: invalid object name '. \"'.\n",
+  "name": "ShellError"
+}

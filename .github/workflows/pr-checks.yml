@@ -100,32 +100,70 @@ jobs:
           git fetch origin main
           CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
 
+          echo "Files changed in this PR:"
+          echo "$CHANGED_FILES"
+          echo ""
+
           # Skip check if only docs, config, or test files changed
-          if ! echo "$CHANGED_FILES" | grep -E 'packages/.+\.(ts|js)$' | grep -v test | grep -v spec | head -1; then
+          SOURCE_CHANGES=$(echo "$CHANGED_FILES" | grep -E 'packages/.+\.(ts|js)$' | grep -v test | grep -v spec || true)
+
+          if [ -z "$SOURCE_CHANGES" ]; then
             echo "✅ No source code changes detected, changeset not required"
+            echo "Only docs, config, or test files were modified."
             exit 0
           fi
 
-          echo "Source code changes detected, checking for changeset..."
+          echo "📦 Source code changes detected:"
+          echo "$SOURCE_CHANGES"
+          echo ""
+          echo "Checking for changeset..."
 
-          # Check if changeset files exist
-          if ls .changeset/*.md >/dev/null 2>&1; then
-            CHANGESET_COUNT=$(ls -1 .changeset/*.md 2>/dev/null | wc -l)
-            if [ "$CHANGESET_COUNT" -gt 0 ]; then
-              echo "✅ Found $CHANGESET_COUNT changeset file(s)"
-              exit 0
-            fi
+          # Check if changeset files exist (excluding README.md)
+          CHANGESET_FILES=$(find .changeset -name "*.md" ! -name "README.md" 2>/dev/null || true)
+
+          if [ -n "$CHANGESET_FILES" ]; then
+            CHANGESET_COUNT=$(echo "$CHANGESET_FILES" | wc -l)
+            echo "✅ Found $CHANGESET_COUNT changeset file(s):"
+            echo "$CHANGESET_FILES"
+            exit 0
           fi
 
           echo "❌ No changeset found!"
-          echo "Please add a changeset to describe your changes:"
-          echo "  bun run changeset:add"
           echo ""
-          echo "This helps with:"
-          echo "- Automatic version bumping"
-          echo "- Changelog generation"
-          echo "- Release notes"
+          echo "🚀 Please add a changeset to describe your changes:"
+          echo "   bun run changeset:add"
+          echo ""
+          echo "💡 This changeset will be used for:"
+          echo "   • Automatic version bumping (patch/minor/major)"
+          echo "   • Changelog generation"
+          echo "   • Release notes"
+          echo "   • Publishing to npm"
+          echo ""
+          echo "📖 Learn more: https://github.com/changesets/changesets/blob/main/docs/adding-a-changeset.md"
           exit 1
+
+  markdown_lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run markdown lint
+        run: bun run check:md
 
   build_check:
     name: Build Check
